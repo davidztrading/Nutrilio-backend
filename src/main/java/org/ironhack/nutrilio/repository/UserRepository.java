@@ -4,8 +4,11 @@ import org.ironhack.nutrilio.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-// BLOQUE DE CONFIGURACIÓN DEL REPOSITORIO DE USUARIOS
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    // Query Method mágico de Spring Data JPA para buscar usuarios por su email
+    Optional<User> findByEmail(String email);
 }

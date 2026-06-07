@@ -2,41 +2,35 @@ package org.ironhack.nutrilio.service;
 
 import org.ironhack.nutrilio.models.User;
 import org.ironhack.nutrilio.repository.UserRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.ironhack.nutrilio.dtos.UserRequestDTO;
+import org.ironhack.nutrilio.dtos.UserResponseDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
-    // Inyectamos el encriptador que acabamos de configurar
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRepository userRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    // Crear usuario desde DTO
+    public UserResponseDTO registerUser(UserRequestDTO requestDTO) {
+        User user = new User();
+        user.setEmail(requestDTO.getEmail());
+        user.setPassword(requestDTO.getPassword()); // En la fase de seguridad, aquí irá el PasswordEncoder
+
+        User savedUser = userRepository.save(user);
+
+        return new UserResponseDTO(savedUser.getId(), savedUser.getEmail());
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
-    }
-
-    // BLOQUE DE REGISTRO SEGURO (SEMANA 11)
-    public User registerUser(User user) {
-        // Coge la contraseña en texto plano, la encripta con BCrypt y la vuelve a setear
-        String encryptedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encryptedPassword);
-
-        return userRepository.save(user);
-    }
-
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    // Listar todos los usuarios convertidos a DTO
+    public List<UserResponseDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(user -> new UserResponseDTO(user.getId(), user.getEmail()))
+                .collect(Collectors.toList());
     }
 }
