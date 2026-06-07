@@ -1,11 +1,10 @@
 package org.ironhack.nutrilio.controller;
 
-import jakarta.validation.Valid;
-import org.ironhack.nutrilio.dtos.UserRegistrationDTO;
+import org.ironhack.nutrilio.dtos.UserRequestDTO;
 import org.ironhack.nutrilio.dtos.UserResponseDTO;
 import org.ironhack.nutrilio.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,21 +13,17 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponseDTO register(@RequestBody UserRequestDTO userDTO) {
+        return userService.registerUser(userDTO);
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
-
-    // BLOQUE DE ENDPOINT PARA REGISTRO
-    @PostMapping("/register")
-    public ResponseEntity<UserResponseDTO> registerUser(@Valid @RequestBody UserRegistrationDTO registrationDTO) {
-        UserResponseDTO registeredUser = userService.registerUser(registrationDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
+    public List<UserResponseDTO> getAll() {
+        return userService.getAllUsers();
     }
 }
