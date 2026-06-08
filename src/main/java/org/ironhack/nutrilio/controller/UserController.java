@@ -1,29 +1,27 @@
 package org.ironhack.nutrilio.controller;
 
-import org.ironhack.nutrilio.dtos.UserRequestDTO;
-import org.ironhack.nutrilio.dtos.UserResponseDTO;
+import org.ironhack.nutrilio.dtos.UserRegistrationDTO; // Import correcto
+import org.ironhack.nutrilio.models.User;
 import org.ironhack.nutrilio.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserResponseDTO register(@RequestBody UserRequestDTO userDTO) {
-        return userService.registerUser(userDTO);
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping
-    public List<UserResponseDTO> getAll() {
-        return userService.getAllUsers();
+    // Usamos UserRegistrationDTO para el registro
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public User register(@RequestBody UserRegistrationDTO userDTO) {
+        return userService.registerUser(userDTO);
     }
 }
