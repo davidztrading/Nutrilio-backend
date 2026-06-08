@@ -13,28 +13,30 @@ public class NutritionalAIService {
     @Autowired
     private UserRepository userRepository;
 
-    public String getRecommendations() {
-        // 1. Obtener email del contexto de seguridad
+    public String generateDietPlan() {
+        // 1. Obtener email del usuario logueado
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        // 2. Buscar usuario
+        // 2. Buscar usuario en base de datos
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // 3. Obtener perfil
+        // 3. Obtener el perfil relacionado
         UserProfile profile = user.getProfile();
 
         if (profile == null) {
-            throw new RuntimeException("El usuario no tiene un perfil configurado");
+            return "Por favor, configura tu perfil en /api/profiles/update para recibir recomendaciones.";
         }
 
-        // 4. Lógica de IA (aquí usarás los datos del profile)
+        // 4. Construir el prompt para la IA
         return String.format(
-                "Generando plan para %s: Meta: %s, Actividad: %s, Peso: %.1fkg",
+                "Generando plan nutricional para %s. Datos de usuario: " +
+                        "Peso: %.1f kg, Edad: %d años, Nivel de actividad: %s, Objetivo: %s.",
                 profile.getName(),
-                profile.getNutritionalGoal(),
+                profile.getWeight(),
+                profile.getAge(),
                 profile.getActivityLevel(),
-                profile.getWeight()
+                profile.getNutritionalGoal()
         );
     }
 }
