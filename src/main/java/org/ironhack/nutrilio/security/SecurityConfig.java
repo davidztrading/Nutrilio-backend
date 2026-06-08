@@ -2,6 +2,7 @@ package org.ironhack.nutrilio.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,18 +16,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Desactivamos CSRF para poder probar con Postman fácilmente
+                // Deshabilitamos CSRF porque estamos creando una API REST sin estado (Stateless)
+                // Esto evita que Spring intente redirigir a una página de login HTML
+                .csrf(csrf -> csrf.disable())
+
+                // Configuración de rutas
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/register").permitAll() // Registro público
-                        .anyRequest().authenticated() // Todo lo demás requiere login
+                        .anyRequest().authenticated() // Todo lo demás requiere estar logueado
                 )
-                .formLogin(form -> form
-                        .successHandler((request, response, authentication) -> {
-                            response.setStatus(200); // En lugar de redirigir, devolvemos OK
-                            response.getWriter().write("Login exitoso");
-                        })
-                        .permitAll()
-                );
+
+                // Habilitamos Basic Auth para poder enviar credenciales desde Postman/IntelliJ
+                .httpBasic(Customizer.withDefaults());
+
         return http.build();
     }
 
