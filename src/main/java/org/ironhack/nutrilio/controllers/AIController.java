@@ -1,4 +1,4 @@
-package org.ironhack.nutrilio.controller;
+package org.ironhack.nutrilio.controllers;
 
 import org.ironhack.nutrilio.service.NutritionalAIService;
 import org.springframework.beans.factory.annotation.Autowired;

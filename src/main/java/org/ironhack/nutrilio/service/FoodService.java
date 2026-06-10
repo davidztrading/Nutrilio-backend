@@ -15,6 +15,7 @@ public class FoodService {
     @Autowired
     private FoodRepository foodRepository;
 
+    // Este es el método que tu controlador llama
     public List<FoodResponseDTO> getAllFoods() {
         return foodRepository.findAll().stream()
                 .map(food -> new FoodResponseDTO(food.getId(), food.getName(), food.getCalories()))

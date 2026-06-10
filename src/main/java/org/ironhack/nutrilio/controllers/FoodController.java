@@ -1,4 +1,4 @@
-package org.ironhack.nutrilio.controller;
+package org.ironhack.nutrilio.controllers;
 
 import org.ironhack.nutrilio.dtos.FoodResponseDTO;
 import org.ironhack.nutrilio.service.FoodService;
