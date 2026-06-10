@@ -1,52 +1,36 @@
 package org.ironhack.nutrilio.service;
 
-import org.ironhack.nutrilio.models.*;
-import org.ironhack.nutrilio.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.ironhack.nutrilio.dtos.DietDTO;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
+import org.springframework.web.client.RestTemplate;
+import java.util.*;
 
 @Service
 public class NutritionalAIService {
 
-    @Autowired private DietRepository dietRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private FoodRepository foodRepository;
-    @Autowired private DietItemRepository dietItemRepository;
-
     @Value("${spring.ai.openai.api-key}")
     private String apiKey;
 
-    @Transactional
-    public Diet generateDietPlan(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    public DietDTO generateDirectly(String goal) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + apiKey);
 
-        Diet diet = new Diet();
-        diet.setUser(user);
-        diet.setName("Plan IA");
-        diet.setCreatedAt(LocalDate.now());
-        diet.setDescription("Dieta generada por IA");
-        diet.setItems(new ArrayList<>());
-        diet = dietRepository.save(diet);
+        Map<String, Object> body = new HashMap<>();
+        body.put("model", "gpt-3.5-turbo");
+        body.put("messages", List.of(Map.of("role", "user", "content", "Dame 3 platos para: " + goal + ". Respuesta solo nombres separados por coma")));
 
-        String[] nombres = {"Pollo", "Arroz", "Ensalada"};
-        for (String nombre : nombres) {
-            Food food = foodRepository.findByName(nombre.trim())
-                    .orElseGet(() -> foodRepository.save(new Food(nombre.trim(), 0.0)));
+        ResponseEntity<Map> response = restTemplate.postForEntity("https://api.openai.com/v1/chat/completions", new HttpEntity<>(body, headers), Map.class);
+        List<Map<String, Object>> choices = (List<Map<String, Object>>) response.getBody().get("choices");
+        String sugerencias = (String) ((Map<String, Object>) choices.get(0).get("message")).get("content");
 
-            DietItem item = new DietItem();
-            item.setFood(food);
-            item.setDiet(diet);
-            item.setQuantity(1);
-
-            dietItemRepository.save(item);
-            diet.getItems().add(item);
-        }
-        return diet;
+        DietDTO dto = new DietDTO();
+        dto.setId(0L);
+        dto.setName("Plan IA: " + goal);
+        dto.setFoods(Arrays.asList(sugerencias.split(",")));
+        return dto;
     }
 }
