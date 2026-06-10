@@ -1,14 +1,12 @@
 package org.ironhack.nutrilio.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "diet_items")
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class DietItem {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,10 +14,16 @@ public class DietItem {
     private Integer quantity;
 
     @ManyToOne
-    @JoinColumn(name = "diet_id", nullable = false)
-    private Diet diet;
+    @JoinColumn(name = "food_id")
+    private Food food;
 
     @ManyToOne
-    @JoinColumn(name = "food_id", nullable = false)
-    private Food food;
+    @JoinColumn(name = "diet_id")
+    @JsonBackReference // Detiene la recursión hacia atrás
+    private Diet diet;
+
+    @Override
+    public String toString() {
+        return "DietItem{id=" + id + "}";
+    }
 }

@@ -5,8 +5,8 @@ import lombok.*;
 
 @Entity
 @Table(name = "foods")
-@Getter @Setter
-@NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@ToString(exclude = "diet")
 public class Food {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,12 +15,9 @@ public class Food {
     private String name;
     private Double calories;
 
-    @Column(name = "food_type", nullable = false)
-    private String foodType = "GENERAL"; // Valor por defecto aquí
-
-    public Food(String name) {
+    // AÑADE ESTO: Constructor que acepta String y double
+    public Food(String name, Double calories) {
         this.name = name;
-        this.calories = 0.0;
-        this.foodType = "GENERAL";
+        this.calories = calories;
     }
 }
