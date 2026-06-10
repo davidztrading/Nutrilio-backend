@@ -1,44 +1,43 @@
 package org.ironhack.nutrilio.service;
 
+import org.ironhack.nutrilio.dtos.UserProfileDTO;
 import org.ironhack.nutrilio.models.User;
 import org.ironhack.nutrilio.models.UserProfile;
-import org.ironhack.nutrilio.repository.UserRepository;
 import org.ironhack.nutrilio.repository.UserProfileRepository;
+import org.ironhack.nutrilio.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserProfileService {
 
     @Autowired
-    private UserProfileRepository userProfileRepository;
+    private UserProfileRepository profileRepository;
+
     @Autowired
     private UserRepository userRepository;
 
-    public Optional<UserProfile> getProfileById(Long id) {
-        return userProfileRepository.findById(id);
-    }
-
-    public UserProfile saveOrUpdateProfile(UserProfile profile) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    @Transactional
+    public void saveOrUpdateProfile(String email, UserProfileDTO dto) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + email));
 
-        UserProfile existingProfile = user.getProfile();
+        // Usamos el perfil existente o creamos uno nuevo
+        UserProfile profile = (user.getProfile() != null) ? user.getProfile() : new UserProfile();
 
-        if (existingProfile != null) {
-            existingProfile.setName(profile.getName());
-            existingProfile.setWeight(profile.getWeight());
-            existingProfile.setHeight(profile.getHeight());
-            existingProfile.setAge(profile.getAge());
-            existingProfile.setActivityLevel(profile.getActivityLevel());
-            existingProfile.setNutritionalGoal(profile.getNutritionalGoal());
-            return userProfileRepository.save(existingProfile);
-        } else {
-            profile.setUser(user);
-            return userProfileRepository.save(profile);
+        profile.setUser(user);
+        profile.setWeight(dto.getWeight());
+        profile.setHeight(dto.getHeight());
+        profile.setGoal(dto.getNutritionalGoal());
+        profile.setGoal(dto.getActivityLevel());
+
+        profileRepository.save(profile);
+
+        // Vinculamos el perfil al usuario si es nuevo
+        if (user.getProfile() == null) {
+            user.setProfile(profile);
+            userRepository.save(user);
         }
     }
 }

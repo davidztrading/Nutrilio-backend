@@ -1,26 +1,26 @@
 package org.ironhack.nutrilio.controllers;
 
-import org.ironhack.nutrilio.dtos.FoodResponseDTO;
-import org.ironhack.nutrilio.service.FoodService;
+import org.ironhack.nutrilio.models.Food;
+import org.ironhack.nutrilio.repository.FoodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/foods")
+@RequestMapping("/api/food")
 public class FoodController {
+    @Autowired private FoodRepository repo;
 
-    @Autowired
-    private FoodService foodService;
-
-    @GetMapping
-    public List<FoodResponseDTO> getAllFoods() {
-        return foodService.getAllFoods();
+    @GetMapping public List<Food> getAll() { return repo.findAll(); }
+    @PostMapping public Food create(@RequestBody Food food) { return repo.save(food); }
+    @PutMapping("/{id}") public ResponseEntity<Food> update(@PathVariable Long id, @RequestBody Food foodDetails) {
+        return repo.findById(id).map(f -> {
+            f.setName(foodDetails.getName());
+            return ResponseEntity.ok(repo.save(f));
+        }).orElse(ResponseEntity.notFound().build());
     }
-
-    @GetMapping("/{id}")
-    public FoodResponseDTO getFoodById(@PathVariable Long id) {
-        return foodService.getFoodById(id);
+    @DeleteMapping("/{id}") public ResponseEntity<Void> delete(@PathVariable Long id) {
+        repo.deleteById(id); return ResponseEntity.noContent().build();
     }
 }

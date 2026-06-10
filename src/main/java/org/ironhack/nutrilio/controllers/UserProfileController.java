@@ -1,31 +1,27 @@
 package org.ironhack.nutrilio.controllers;
 
-import org.ironhack.nutrilio.models.UserProfile;
+import org.ironhack.nutrilio.dtos.UserProfileDTO;
 import org.ironhack.nutrilio.service.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/profiles")
+@RequestMapping("/api/profile")
 public class UserProfileController {
 
-    private final UserProfileService userProfileService;
-
     @Autowired
-    public UserProfileController(UserProfileService userProfileService) {
-        this.userProfileService = userProfileService;
-    }
+    private UserProfileService profileService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserProfile> getProfileById(@PathVariable Long id) {
-        return userProfileService.getProfileById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+    @PostMapping
+    public ResponseEntity<String> updateProfile(@RequestBody UserProfileDTO dto, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body("No autorizado");
+        }
 
-    @PutMapping
-    public ResponseEntity<UserProfile> updateProfile(@RequestBody UserProfile profile) {
-        return ResponseEntity.ok(userProfileService.saveOrUpdateProfile(profile));
+        String username = authentication.getName();
+        profileService.saveOrUpdateProfile(username, dto);
+        return ResponseEntity.ok("Datos guardados y vinculados correctamente al usuario: " + username);
     }
 }

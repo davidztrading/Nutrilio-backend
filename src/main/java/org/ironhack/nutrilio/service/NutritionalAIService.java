@@ -1,35 +1,30 @@
 package org.ironhack.nutrilio.service;
 
+import org.ironhack.nutrilio.models.Diet;
 import org.ironhack.nutrilio.models.User;
-import org.ironhack.nutrilio.models.UserProfile;
+import org.ironhack.nutrilio.repository.DietRepository;
 import org.ironhack.nutrilio.repository.UserRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDate;
 
 @Service
 public class NutritionalAIService {
+    @Autowired private DietRepository dietRepository;
+    @Autowired private UserRepository userRepository;
 
-    private final UserRepository userRepository;
-
-    public NutritionalAIService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public String generateDietPlan() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    @Transactional
+    public Diet generateDietPlan(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        UserProfile profile = user.getProfile();
+        Diet newDiet = new Diet();
+        newDiet.setUser(user);
+        newDiet.setName("Plan Nutricional IA");
+        newDiet.setCreatedAt(LocalDate.now());
+        newDiet.setDescription("Plan personalizado para objetivo: " + user.getProfile().getNutritionalGoal());
 
-        System.out.println("DEBUG: Buscando perfil para: " + email);
-        System.out.println("DEBUG: Perfil encontrado: " + (profile != null));
-
-        if (profile == null) {
-            return "Error: No se encontró un perfil vinculado al usuario.";
-        }
-
-        return String.format("Plan nutricional para %s. Peso: %.1fkg, Edad: %d, Objetivo: %s.",
-                profile.getName(), profile.getWeight(), profile.getAge(), profile.getNutritionalGoal());
+        return dietRepository.save(newDiet);
     }
 }
