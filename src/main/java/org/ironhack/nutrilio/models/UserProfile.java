@@ -1,30 +1,25 @@
 package org.ironhack.nutrilio.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*; // Asegúrate de importar esto
 
 @Entity
-@Data // Esto genera automáticamente los Getters, Setters, etc.
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "user_profiles")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class UserProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private int age;
     private Double weight;
     private Double height;
-    private String goal;
-
-    // Añade estos campos si los estás llamando en el servicio
-    private String name;
     private String activityLevel;
-    private Integer age;
     private String nutritionalGoal;
+    private String name;
 
     @OneToOne
-    @JoinColumn(name = "user_id", unique = true, nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 }

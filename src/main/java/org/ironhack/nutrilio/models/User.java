@@ -2,32 +2,26 @@ package org.ironhack.nutrilio.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.ironhack.nutrilio.enums.Role;
 
-// BLOQUE DE CONFIGURACIÓN DE ENTIDAD (JPA Y LOMBOK)
 @Entity
 @Table(name = "users")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // BLOQUE DE CREDENCIALES DE ACCESO UNICAS
     @Column(unique = true, nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    private String role;
 
-    // BLOQUE DE RELACIÓN ONE-TO-ONE (Configura la clave foránea y el borrado en cascada)
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "profile_id", referencedColumnName = "id")
+    // mappedBy indica que el dueño es el campo 'user' en la clase UserProfile
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserProfile profile;
 }

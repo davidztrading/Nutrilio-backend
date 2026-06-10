@@ -2,10 +2,8 @@ package org.ironhack.nutrilio.repository;
 
 import org.ironhack.nutrilio.models.Food;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
-// BLOQUE DE CONFIGURACIÓN DEL REPOSITORIO DE ALIMENTOS
-@Repository
 public interface FoodRepository extends JpaRepository<Food, Long> {
-
+    Optional<Food> findByName(String name);
 }

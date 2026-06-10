@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,17 +17,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // Deshabilitamos CSRF porque estamos creando una API REST sin estado (Stateless)
-                // Esto evita que Spring intente redirigir a una página de login HTML
+                // 1. Deshabilitar CSRF (estándar para APIs REST)
                 .csrf(csrf -> csrf.disable())
 
-                // Configuración de rutas
+                // 2. Definir políticas de acceso
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/register").permitAll() // Registro público
-                        .anyRequest().authenticated() // Todo lo demás requiere estar logueado
+                        .requestMatchers("/api/users/register").permitAll() // RUTA PÚBLICA
+                        .anyRequest().authenticated() // RESTO PROTEGIDO
                 )
 
-                // Habilitamos Basic Auth para poder enviar credenciales desde Postman/IntelliJ
+                // 3. Configurar API Stateless (sin sesiones HTTP)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // 4. Usar autenticación básica (o JWT en el futuro)
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
