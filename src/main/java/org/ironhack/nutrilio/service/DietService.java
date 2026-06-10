@@ -3,27 +3,20 @@ package org.ironhack.nutrilio.service;
 import org.ironhack.nutrilio.models.Diet;
 import org.ironhack.nutrilio.models.UserProfile;
 import org.ironhack.nutrilio.repository.DietRepository;
-import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-// BLOQUE DE CONFIGURACIÓN DEL SERVICIO
 @Service
 public class DietService {
 
-    private final DietRepository dietRepository;
-    private final ChatClient chatClient;
+    @Autowired
+    private DietRepository dietRepository;
 
-    // Constructor que unifica la pasarela de datos y el motor de OpenAI
-    public DietService(DietRepository dietRepository, ChatClient.Builder chatClientBuilder) {
-        this.dietRepository = dietRepository;
-        this.chatClient = chatClientBuilder.build();
-    }
+    // --- MÉTODOS CRUD ---
 
-    // BLOQUE DE MÉTODOS DE CONSULTA BÁSICOS (Los que solucionan tus errores)
     public List<Diet> getAllDiets() {
         return dietRepository.findAll();
     }
@@ -32,27 +25,33 @@ public class DietService {
         return dietRepository.findById(id);
     }
 
-    // BLOQUE DE GENERACIÓN DE DIETA CON INTELIGENCIA ARTIFICIAL
+    public Optional<Diet> updateDiet(Long id, Diet dietDetails) {
+        return dietRepository.findById(id).map(diet -> {
+            diet.setName(dietDetails.getName());
+            diet.setDescription(dietDetails.getDescription());
+            return dietRepository.save(diet);
+        });
+    }
+
+    public boolean deleteDiet(Long id) {
+        if (dietRepository.existsById(id)) {
+            dietRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+    // --- LÓGICA DE NEGOCIO (IA / GENERACIÓN) ---
+
     public Diet generateDietForUser(UserProfile profile) {
-        String prompt = String.format(
-                "Genera un plan nutricional diario para un usuario con el nombre %s. " +
-                        "Tiene %d años, pesa %.1f kg, mide %.1f cm. " +
-                        "Su nivel de actividad es %s y su objetivo nutricional es %s. " +
-                        "Devuelve un menú estructurado con desayuno, comida y cena.",
-                profile.getName(), profile.getAge(), profile.getWeight(),
-                profile.getHeight(), profile.getActivityLevel(), profile.getNutritionalGoal()
-        );
+        Diet newDiet = new Diet();
 
-        String aiResponse = chatClient.prompt()
-                .user(prompt)
-                .call()
-                .content();
+        // Simulación lógica de generación de dieta basada en el perfil
+        newDiet.setName("Plan para: " + profile.getNutritionalGoal());
+        newDiet.setDescription("Dieta recomendada basada en peso: " + profile.getWeight() +
+                "kg y nivel de actividad: " + profile.getActivityLevel());
+        newDiet.setCreatedAt(LocalDate.now());
 
-        Diet diet = new Diet();
-        diet.setName("Plan IA para " + profile.getName());
-        diet.setCreatedAt(LocalDate.now());
-        diet.setUser(profile.getUser());
-
-        return dietRepository.save(diet);
+        return dietRepository.save(newDiet);
     }
 }
