@@ -10,8 +10,8 @@ import java.util.*;
 @Service
 public class NutritionalAIService {
 
-    // Asegúrate de que esto tome la clave de la variable de entorno, no del archivo
-    @Value("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")
+
+    @Value("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")
     private String apiKey;
 
     public DietDTO generateDirectly(String goal) {
