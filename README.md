@@ -32,7 +32,9 @@ Estructura de Controladores y Rutas:
 Enlaces adicionales:
 
 Trello: https://nutrilio.atlassian.net/jira/core/projects/NUT/list/?filter=allissues&jql=project%20%3D%20"NUT"%20ORDER%20BY%20created%20DESC
+
 Diapositivas: https://docs.google.com/presentation/d/11vlyePWWuum6k6X3Ji-a8-E6CN7UCkzoNwuWfhwo90A/edit?slide=id.gc6f80d1ff_0_0#slide=id.gc6f80d1ff_0_0
+
 Repositorio Github: https://github.com/davidztrading/Nutrilio-backend
 
 Configuración de la Aplicación:
@@ -80,7 +82,5 @@ Asistente de Optimización Presupuestaria
 <div align="center">
   <img src="images/Diagramas Nutrilio.jpg" alt="Diagramas de Nutrilio" width="800"/>
 </div>
-
-<div align="center">
   <img src="images/Diagramas Nutrilio.jpg" alt="Diagramas de Nutrilio" width="800"/>
 </div>
