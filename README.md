@@ -75,8 +75,11 @@ Asistente de Optimización Presupuestaria
 -: Hace la nutrición saludable accesible a personas con presupuestos limitados, diferenciando a Nutrilio de otras apps que solo se enfocan en las calorías.
 
 
-### Diagramas
 ## 🏗️ Diagramas del Sistema
+
+<div align="center">
+  <img src="images/Diagramas Nutrilio.jpg" alt="Diagramas de Nutrilio" width="800"/>
+</div>
 
 <div align="center">
   <img src="images/Diagramas Nutrilio.jpg" alt="Diagramas de Nutrilio" width="800"/>
