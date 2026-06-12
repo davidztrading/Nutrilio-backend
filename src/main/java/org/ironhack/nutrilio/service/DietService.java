@@ -1,10 +1,13 @@
 package org.ironhack.nutrilio.service;
 
 import org.ironhack.nutrilio.models.Diet;
+import org.ironhack.nutrilio.models.DietItem;
 import org.ironhack.nutrilio.models.UserProfile;
 import org.ironhack.nutrilio.repository.DietRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -15,8 +18,6 @@ public class DietService {
     @Autowired
     private DietRepository dietRepository;
 
-    // --- MÉTODOS CRUD ---
-
     public List<Diet> getAllDiets() {
         return dietRepository.findAll();
     }
@@ -25,10 +26,23 @@ public class DietService {
         return dietRepository.findById(id);
     }
 
+    @Transactional
+    public Diet saveDiet(Diet diet) {
+        // Asegura la relación bidireccional necesaria para persistir los DietItems
+        if (diet.getItems() != null) {
+            for (DietItem item : diet.getItems()) {
+                item.setDiet(diet);
+            }
+        }
+        return dietRepository.save(diet);
+    }
+
+    @Transactional
     public Optional<Diet> updateDiet(Long id, Diet dietDetails) {
         return dietRepository.findById(id).map(diet -> {
             diet.setName(dietDetails.getName());
             diet.setDescription(dietDetails.getDescription());
+            // Si también actualizas items, procesarlos aquí igual que en saveDiet
             return dietRepository.save(diet);
         });
     }
@@ -43,10 +57,9 @@ public class DietService {
 
     // --- LÓGICA DE NEGOCIO (IA / GENERACIÓN) ---
 
+    @Transactional
     public Diet generateDietForUser(UserProfile profile) {
         Diet newDiet = new Diet();
-
-        // Simulación lógica de generación de dieta basada en el perfil
         newDiet.setName("Plan para: " + profile.getNutritionalGoal());
         newDiet.setDescription("Dieta recomendada basada en peso: " + profile.getWeight() +
                 "kg y nivel de actividad: " + profile.getActivityLevel());

@@ -21,12 +21,8 @@ public class Diet {
     @ManyToOne
     private User user;
 
-    @OneToMany(mappedBy = "diet", cascade = CascadeType.ALL)
-    @JsonManagedReference // Gestiona la serialización hacia adelante
+    // CascadeType.ALL es vital para guardar los ítems automáticamente al guardar la dieta
+    @OneToMany(mappedBy = "diet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<DietItem> items = new ArrayList<>();
-
-    @Override
-    public String toString() {
-        return "Diet{id=" + id + ", name='" + name + "'}";
-    }
 }

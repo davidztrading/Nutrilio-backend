@@ -19,11 +19,6 @@ public class DietItem {
 
     @ManyToOne
     @JoinColumn(name = "diet_id")
-    @JsonBackReference // Detiene la recursión hacia atrás
+    @JsonBackReference
     private Diet diet;
-
-    @Override
-    public String toString() {
-        return "DietItem{id=" + id + "}";
-    }
 }
