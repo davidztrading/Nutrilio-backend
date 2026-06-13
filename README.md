@@ -8,6 +8,7 @@ su perfil biométrico y generar planes de comidas automatizados basados en sus m
 el seguimiento de objetivos de salud.
 
 
+
 🛠️ Tecnologías Utilizadas:
 
 Core: Java 25, Spring Boot 4.0.6.
@@ -19,6 +20,7 @@ Seguridad: Spring Security (BCrypt, Basic Authentication).
 IA: Spring AI & OpenAI API.
 
 Herramientas: Maven, Lombok, Jakarta Validation.
+
 
 
 Estructura de Controladores y Rutas:
@@ -34,6 +36,7 @@ Estructura de Controladores y Rutas:
 -FoodController	/api/food	Gestión del catálogo de alimentos.
 
 
+
 Enlaces adicionales:
 
 Trello: https://nutrilio.atlassian.net/jira/core/projects/NUT/list/?filter=allissues&jql=project%20%3D%20"NUT"%20ORDER%20BY%20created%20DESC
@@ -41,6 +44,8 @@ Trello: https://nutrilio.atlassian.net/jira/core/projects/NUT/list/?filter=allis
 Diapositivas: https://docs.google.com/presentation/d/11vlyePWWuum6k6X3Ji-a8-E6CN7UCkzoNwuWfhwo90A/edit?slide=id.gc6f80d1ff_0_0#slide=id.gc6f80d1ff_0_0
 
 Repositorio Github: https://github.com/davidztrading/Nutrilio-backend
+
+
 
 Configuración de la Aplicación:
 
@@ -51,6 +56,7 @@ La APP utiliza un esquema de Configuración Externa:
 -Emplea Spring Data JPA con Hibernate para mapear automáticamente los objetos Java a tablas MySQL, simplificando las consultas SQL a simples llamadas de método.
 
 -Está configurada con Spring Security, que actúa como un "portero": intercepta cada petición HTTP, verifica si el usuario tiene credenciales válidas y decide si permite el acceso a la lógica de negocio.
+
 
 Funcionamiento Interno:
 
@@ -84,6 +90,7 @@ Funcionamiento Interno:
 
 -Capa de Persistencia (Repository & DB): Finalmente, la aplicación toma este DTO y lo mapea a una entidad Diet utilizando JPA/Hibernate, que se encarga de traducir los objetos Java a sentencias SQL para almacenar el resultado en MySQL.
 
+
 Trabajo para el futuro:
 
 Integración con Dispositivos "Wearables" (Google Fit / Apple Health)
@@ -110,6 +117,7 @@ Asistente de Optimización Presupuestaria
 
 -En qué consiste: Integrar una funcionalidad que calcule el coste de los alimentos recomendados y sugiera alternativas más económicas o locales para mantener el presupuesto semanal.
 -: Hace la nutrición saludable accesible a personas con presupuestos limitados, diferenciando a Nutrilio de otras apps que solo se enfocan en las calorías.
+
 
 
 ## 🏗️ Diagramas del Sistema
