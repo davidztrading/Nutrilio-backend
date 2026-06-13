@@ -47,12 +47,34 @@ La APP utiliza un esquema de Configuración Externa:
 Funcionamiento Interno:
 
 -El funcionamiento interno sigue un patrón de Capas de Abstracción:
+
 -Capa de Controladores (@RestController): Es la puerta de entrada. Reciben las peticiones HTTP (GET/POST), validan que los datos básicos sean correctos y delegan el trabajo pesado a los servicios.
+
 -Capa de Servicios (@Service): Aquí reside el "cerebro".
+
 -Lógica de Negocio: Procesa los datos del usuario.
+
 -Integración con IA: El NutritionalAIService actúa como puente. Convierte el objetivo del usuario en un prompt, lo envía a OpenAI vía RestTemplate, y procesa la respuesta JSON para convertirla en un objeto DietDTO legible para tu base de datos.
+
 -Capa de Acceso a Datos (Repository): Utiliza JpaRepository para la comunicación directa con MySQL. Es la capa que garantiza que la información de usuarios, alimentos y dietas se guarde de forma permanente.
+
 -Flujo de Excepciones: Si ocurre un error (usuario no encontrado, datos inválidos), un GlobalExceptionHandler intercepta el fallo y devuelve una respuesta estructurada y limpia al usuario, evitando que el sistema se bloquee o muestre información sensible del código.
+
+-Cuando un usuario interactúa con la aplicación, el flujo sigue un modelo de Arquitectura en Capas (Layered Architecture), lo que garantiza que la lógica esté desacoplada y sea fácil de mantener:
+
+-Capa de Entrada (Controller): El NutritionalAIController recibe la petición HTTP del usuario. Su única responsabilidad es recibir el objetivo y delegar el trabajo al servicio.
+
+-Capa de Negocio (Service): El NutritionalAIService coordina la operación:
+
+-Prepara una petición HTTP segura, adjuntando la API Key en el encabezado (Bearer Token).
+
+-Envía el prompt estructurado a la API de OpenAI.
+
+-Recibe una respuesta JSON compleja, la cual "desenvuelve" para extraer solo la información útil.
+
+-Capa de Transformación (DTOs): El servicio convierte la respuesta de la IA en un objeto Java limpio (DietDTO), facilitando el transporte de datos sin exponer las estructuras internas de la base de datos.
+
+-Capa de Persistencia (Repository & DB): Finalmente, la aplicación toma este DTO y lo mapea a una entidad Diet utilizando JPA/Hibernate, que se encarga de traducir los objetos Java a sentencias SQL para almacenar el resultado en MySQL.
 
 Trabajo para el futuro:
 
