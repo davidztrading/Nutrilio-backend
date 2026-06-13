@@ -2,7 +2,7 @@
 
 📝 Descripción del proyecto
 
-Nutrilio es una plataforma backend de alto rendimiento diseñada para la planificación nutricional
+Nutrilio es una plataforma backend diseñada para la planificación nutricional
 personalizada mediante el uso de Inteligencia Artificial. La aplicación permite a los usuarios gestionar
 su perfil biométrico y generar planes de comidas automatizados basados en sus metas específicas, facilitando
 el seguimiento de objetivos de salud.
