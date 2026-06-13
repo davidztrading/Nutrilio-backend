@@ -9,5 +9,6 @@ import java.util.List;
 public class DietDTO {
     private Long id;
     private String name;
-    private List<String> foods;
+    // Cambiamos List<String> por List<FoodInfoDTO>
+    private List<DietItemDTO> foods;
 }
