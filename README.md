@@ -45,8 +45,11 @@ Repositorio Github: https://github.com/davidztrading/Nutrilio-backend
 Configuración de la Aplicación:
 
 La APP utiliza un esquema de Configuración Externa:
+
 -Utiliza variables de entorno (como OPENAI_API_KEY) para proteger credenciales.
+
 -Emplea Spring Data JPA con Hibernate para mapear automáticamente los objetos Java a tablas MySQL, simplificando las consultas SQL a simples llamadas de método.
+
 -Está configurada con Spring Security, que actúa como un "portero": intercepta cada petición HTTP, verifica si el usuario tiene credenciales válidas y decide si permite el acceso a la lógica de negocio.
 
 Funcionamiento Interno:
